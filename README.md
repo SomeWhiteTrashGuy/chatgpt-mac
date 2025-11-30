@@ -1,4 +1,4 @@
-
+DOWNLOAD HERE OR FROM RELEASES PAGE: https://github.com/SomeWhiteTrashGuy/chatgpt-mac/releases/download/v!/ChatGPT-1.0.0-x64.dmg
 
 ---
 
