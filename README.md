@@ -1,4 +1,4 @@
-Got it—that makes sense. Here’s the README in normal text/Markdown format you can copy and paste straight into GitHub, no terminal-style box.
+
 
 ---
 
