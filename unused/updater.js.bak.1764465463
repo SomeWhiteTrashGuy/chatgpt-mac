@@ -1,0 +1,7 @@
+const https = require('https');
+module.exports = {
+  checkForUpdates(callback) {
+    // simple no-op or fetch GitHub releases if desired
+    callback(null, { tag_name: 'v0.0.0' });
+  }
+};

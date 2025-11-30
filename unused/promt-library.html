@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Prompt Library</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+    h1 {
+      font-size: 18px;
+      margin: 0 0 10px 0;
+    }
+    #container {
+      display: flex;
+      gap: 10px;
+      height: calc(100vh - 40px);
+    }
+    #list {
+      flex: 1;
+      border: 1px solid #ccc;
+      overflow-y: auto;
+      padding: 5px;
+      min-width: 150px;
+    }
+    .prompt {
+      padding: 4px 6px;
+      cursor: pointer;
+      border-radius: 4px;
+      margin-bottom: 2px;
+    }
+    .prompt:hover {
+      background: #f0f0ff;
+    }
+    #editor {
+      flex: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    #title {
+      padding: 4px;
+      font-size: 14px;
+    }
+    #content {
+      flex: 1;
+      padding: 4px;
+      font-size: 13px;
+      resize: vertical;
+    }
+    #buttons {
+      display: flex;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    #buttons button {
+      padding: 4px 10px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Prompt Library</h1>
+  <div id="container">
+    <div id="list">Loading prompts…</div>
+    <div id="editor">
+      <input id="title" placeholder="New / Edit Prompt" />
+      <textarea id="content" placeholder="Prompt content"></textarea>
+      <div id="buttons">
+        <button id="save">Save Prompt</button>
+        <button id="delete">Delete Selected</button>
+        <button id="use">Insert to Main</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="promt-library.js"></script>
+</body>
+</html>

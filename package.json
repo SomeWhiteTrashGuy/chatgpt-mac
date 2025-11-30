@@ -1,0 +1,15 @@
+{
+  "name": "chatgpt-mac",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron .",
+    "make": "electron-forge make"
+  },
+  "devDependencies": {
+    "electron": "^25.9.8",
+    "@electron-forge/cli": "^6.0.0",
+    "@electron-forge/maker-dmg": "^6.0.0",
+    "@electron-forge/maker-zip": "^6.0.0"
+  }
+}

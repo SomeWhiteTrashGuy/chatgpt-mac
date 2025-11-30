@@ -1,0 +1,100 @@
+const { app, BrowserWindow, ipcMain, Menu, shell } = require("electron");
+const fs = require("fs");
+const path = require("path");
+
+// user-writable storage directory
+const userDataDir = path.join(app.getPath("appData"), "ChatGPT");
+if (!fs.existsSync(userDataDir)) {
+  try { fs.mkdirSync(userDataDir, { recursive: true }); } catch(e) {}
+}
+
+// Paths
+const promptsPath = path.join(userDataDir, "prompts.json");
+const settingsPath = path.join(userDataDir, "settings.json");
+
+// ensure defaults exist
+if (!fs.existsSync(promptsPath)) fs.writeFileSync(promptsPath, "[]", "utf8");
+if (!fs.existsSync(settingsPath)) fs.writeFileSync(settingsPath, JSON.stringify({ offlineMode:false }, null,2),"utf8");
+
+// Optional offline server
+let localServer = null;
+try { localServer = require("./localserver.js"); } catch (e) { /* no local server */ }
+
+function createWindow() {
+  const win = new BrowserWindow({
+    width: 1000,
+    height: 900,
+    backgroundColor: "#000000",
+    webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
+      devTools: false
+    }
+  });
+
+  // faster and more compatible front-end
+  win.loadURL("https://chatgpt.com");
+
+  buildMenu(win);
+}
+
+// IPC handlers
+ipcMain.handle("load-prompts", async () => {
+  try { return JSON.parse(fs.readFileSync(promptsPath, "utf8")); } catch(e){ return []; }
+});
+ipcMain.handle("save-prompts", async (ev, data) => {
+  fs.writeFileSync(promptsPath, JSON.stringify(data, null, 2), "utf8");
+  return { success: true };
+});
+ipcMain.handle("load-settings", async () => {
+  try { return JSON.parse(fs.readFileSync(settingsPath, "utf8")); } catch(e){ return { offlineMode:false }; }
+});
+ipcMain.handle("save-settings", async (ev, data) => {
+  fs.writeFileSync(settingsPath, JSON.stringify(data, null, 2), "utf8");
+  return { success: true };
+});
+ipcMain.handle("ping-local", async () => {
+  if (!localServer) return { status: "error", message: "Local server missing." };
+  return await localServer.ping();
+});
+
+// menu & offline toggle
+function buildMenu(win) {
+  const template = [
+    {
+      label: "App",
+      submenu: [
+        { label: "Reload", accelerator: "Command+R", click: () => win.reload() },
+        { type: "separator" },
+        { label: "Toggle Offline Mode", click: () => toggleOfflineMode(win) },
+        { type: "separator" },
+        { label: "Quit", accelerator: "Command+Q", click: () => app.quit() }
+      ]
+    },
+    {
+      label: "Tools",
+      submenu: [
+        { label: "Open Prompt Library", click: () => win.webContents.send("open-prompt-library") }
+      ]
+    },
+    {
+      label: "Links",
+      submenu: [
+        { label: "ChatGPT.com", click: () => shell.openExternal("https://chatgpt.com") },
+        { label: "GitHub", click: () => shell.openExternal("https://github.com/vincelwt/chatgpt-mac") }
+      ]
+    }
+  ];
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+}
+
+function toggleOfflineMode(win) {
+  let settings = { offlineMode: false };
+  try { settings = JSON.parse(fs.readFileSync(settingsPath, "utf8")); } catch(e){}
+  settings.offlineMode = !settings.offlineMode;
+  fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2), "utf8");
+  win.webContents.send("settings-updated", settings);
+  console.log("Offline Mode:", settings.offlineMode);
+}
+
+app.whenReady().then(createWindow);
+app.on("window-all-closed", () => { if (process.platform !== "darwin") app.quit(); });
