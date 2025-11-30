@@ -51,4 +51,9 @@ Clone the repository and install dependencies:\
 git clone https://github.com/SomeWhiteTrashGuy/chatgpt-mac.git\
 cd chatgpt-mac\
 npm install\
+\
+## Disclaimer\
+\
+This project is an unofficial, third-party wrapper around the ChatGPT website.  \
+It is not affiliated with, endorsed by, or sponsored by OpenAI.\
 }
